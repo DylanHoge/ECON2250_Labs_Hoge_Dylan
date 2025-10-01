@@ -105,6 +105,8 @@ Now, we are going to learn how to collaborate using GitHub. Follow these steps:
 
 Type line below here:
 
+Yo this is Virthiha.
+
 **To complete these exercise, you have to have at least one contributions from your teammates in your repository.**
 
 # Exercise 3: Creating Descriptive Statistics
@@ -359,11 +361,19 @@ earnwk_black <-cpsemployed[cpsemployed$race=="Black","earnwk"]
 earnwk_other <-cpsemployed[cpsemployed$race=="Other","earnwk"]
 earnwk_white <-cpsemployed[cpsemployed$race=="White","earnwk"]
 # firstplotthedensityofweeklyearningsforblackindividuals
-plot(density(earnwk_black), main="",xlab="Weekly earnings($)")
+get_earn <- function(race_label) {
+x <- cpsemployed$earnwk[cpsemployed$race == race_label]   # vector
+  x <- suppressWarnings(as.numeric(as.character(x)))        # factor/char -> numeric
+  x[is.finite(x)]                                           # drop NA/Inf
+}
+earn_black <- get_earn("Black")
+earn_other <- get_earn("Other")
+earn_white <- get_earn("White")
+plot(density(earn_black, na.rm = TRUE), main = "", xlab = "Weekly earnings ($)")
 # overlaythedensityofweeklyearningsforother-raceindividuals
-lines(density(earnwk_other), lty=3)
+lines(density(earn_other, na.rm = TRUE), lty = 3)
 # overlaythedensityofweeklyearningsforwhiteindividuals
-lines(density(earnwk_white), lty=2)
+lines(density(earn_white, na.rm = TRUE), lty = 2)
 # drawthelegend
 legend("topright", legend=c("Black","Other","White"), lty=c(1,3,2), inset=0.01)
 ```
@@ -396,14 +406,40 @@ There is website that host a collection of beautiful charts you might want to vi
 
 ```{r, echo=T, eval=T}
 #| label: r graph gallery replication 1
+set.seed(1)
+Ixos=rnorm(4000 , 120 , 30)     
+Primadur=rnorm(4000 , 200 , 30) 
+ 
+# First distribution
+hist(Ixos, breaks=30, xlim=c(0,300), col=rgb(1,0,0,0.5), xlab="height", 
+     ylab="nbr of plants", main="distribution of height of 2 durum wheat varieties" )
 
+# Second with add=T to plot on top
+hist(Primadur, breaks=30, xlim=c(0,300), col=rgb(0,0,1,0.5), add=T)
+
+# Add legend
+legend("topright", legend=c("Ixos","Primadur"), col=c(rgb(1,0,0,0.5), 
+     rgb(0,0,1,0.5)), pt.cex=2, pch=15 )
 ```
 
 *Visualization replication 2* \AddToHookNext{env/Highlighting/begin}{\small}
 
 ```{r, echo=T, eval=T}
 #| label: r graph gallery replication 2
-
+names <- c(rep("A", 20) , rep("B", 20) , rep("C", 20), rep("D", 20))
+value <- c( sample(2:5, 20 , replace=T) , sample(6:10, 20 , replace=T), 
+       sample(1:7, 20 , replace=T), sample(3:10, 20 , replace=T) )
+data <- data.frame(names,value)
+ 
+# Classic boxplot (A-B-C-D order)
+# boxplot(data$value ~ data$names)
+ 
+# I reorder the groups order : I change the order of the factor data$names
+data$names <- factor(data$names , levels=c("A", "D", "C", "B"))
+ 
+#The plot is now ordered !
+boxplot(data$value ~ data$names , col=rgb(0.3,0.5,0.4,0.6) , ylab="value" , 
+    xlab="names in desired order")
 ```
 
 # Wrapping up
